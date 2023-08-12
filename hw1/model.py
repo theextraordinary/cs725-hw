@@ -1,5 +1,7 @@
 import numpy as np
 
+
+
 class LogisticRegression:
     def __init__(self):
         """
@@ -17,6 +19,7 @@ class LogisticRegression:
         """
         Preprocess the input any way you seem fit.
         """
+        print(input_x)
         return input_x
 
     def sigmoid(self, x):
@@ -126,3 +129,6 @@ class LinearClassifier:
         The returned array must be the list of predicted class labels for every input in `input_x`
         """
         pass
+
+lr=LogisticRegression()
+lr.preprocess([1,2,3])
