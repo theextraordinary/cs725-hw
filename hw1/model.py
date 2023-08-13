@@ -106,6 +106,8 @@ class LogisticRegression:
         return gradient
 
     def update_weights(self, grad, learning_rate, momentum):
+        
+        
         """
         Arguments:
         grad -- NumPy array with same shape as `self.weights`
