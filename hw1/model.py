@@ -1,6 +1,38 @@
 import numpy as np
 
 
+def standardize(input_x):
+    means=[]
+    for i in range(4):
+        means.append(np.mean(input_x[:,i]))
+    print(means)
+    stds=[]
+    for i in range(4):
+        stds.append(np.std(input_x[:,i]))
+    print(stds)
+    for i in range(4):
+        x=input_x[:,i]
+        x=(x-means[i])/stds[i]
+        print(x)
+        input_x[:,i]=x
+    print(input_x)
+    return input_x
+
+def normalize(input_x):
+    maxv=[]
+    minv=[]
+    for  i in range(4):
+       minv.append(np.min(input_x[:,i]))
+       maxv.append(np.max(input_x[:,i]))
+
+    for i in range(4):
+        x=input_x[:,i]
+        x=(x-minv[i])/(maxv[i]-minv[i])
+        input_x[:,i]=x
+    print(maxv)
+    print(minv)
+    print(input_x)
+    return input_x    
 
 class LogisticRegression:
     def __init__(self):
@@ -15,17 +47,24 @@ class LogisticRegression:
         self.d = 2 # input space is 2D. easier to visualize
         self.weights = np.zeros((self.d+1, self.num_classes))
     
+
+    
     def preprocess(self, input_x):
         """
         Preprocess the input any way you seem fit.
         """
-        print(input_x)
-        return input_x
+
+        return normalize(input_x)
+       
+      
+    
+
 
     def sigmoid(self, x):
         """
         Implement a sigmoid function if you need it. Ignore otherwise.
         """
+        
         pass
 
     def calculate_loss(self, input_x, input_y):
@@ -131,4 +170,9 @@ class LinearClassifier:
         pass
 
 lr=LogisticRegression()
-lr.preprocess([1,2,3])
+import os
+# data=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\train_x.npy')
+# print(data)
+data=np.array([[1,2,903,4],[3,4,5,6]])
+lr.preprocess(data)
+
