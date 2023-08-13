@@ -3,14 +3,14 @@ import numpy as np
 
 def standardize(input_x):
     means=[]
-    for i in range(4):
+    for i in range(2):
         means.append(np.mean(input_x[:,i]))
     print(means)
     stds=[]
-    for i in range(4):
+    for i in range(2):
         stds.append(np.std(input_x[:,i]))
     print(stds)
-    for i in range(4):
+    for i in range(2):
         x=input_x[:,i]
         x=(x-means[i])/stds[i]
         print(x)
@@ -21,11 +21,11 @@ def standardize(input_x):
 def normalize(input_x):
     maxv=[]
     minv=[]
-    for  i in range(4):
+    for  i in range(2):
        minv.append(np.min(input_x[:,i]))
        maxv.append(np.max(input_x[:,i]))
 
-    for i in range(4):
+    for i in range(2):
         x=input_x[:,i]
         x=(x-minv[i])/(maxv[i]-minv[i])
         input_x[:,i]=x
@@ -54,14 +54,24 @@ class LogisticRegression:
         Preprocess the input any way you seem fit.
         """
         print(input_x)
-        return input_x
+        return standardize(input_x)
 
     def sigmoid(self, x):
+
+        print(self.weights)
+        print(x)
+        ones_column=np.ones((x.shape[0], 1))
+        new_array = np.hstack((ones_column,x))
+        print(new_array)
+        z=new_array.dot(self.weights)
+
+        z=-z
+        funz=1/(1+np.exp(z))
         """
         Implement a sigmoid function if you need it. Ignore otherwise.
         """
+        return funz 
         
-        pass
 
     def calculate_loss(self, input_x, input_y):
         """
@@ -169,6 +179,7 @@ lr=LogisticRegression()
 import os
 # data=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\train_x.npy')
 # print(data)
-data=np.array([[1,2,903,4],[3,4,5,6]])
+data=np.array([[1,2],[3,4],[5,9],[8,7]])
 lr.preprocess(data)
-
+test=lr.sigmoid(data)
+print(test)
