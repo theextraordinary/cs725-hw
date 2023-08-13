@@ -80,7 +80,9 @@ class LogisticRegression:
         input_y -- NumPy array with shape (N,)
         Returns: a single scalar value corresponding to the loss.
         """
-        pass
+        p=self.sigmoid(input_x)
+        cost=np.sum(input_y*np.log(p)+(1-input_y)*np.log(1-p))
+        return cost
 
     def calculate_gradient(self, input_x, input_y):
         """
