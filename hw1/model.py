@@ -53,12 +53,8 @@ class LogisticRegression:
         """
         Preprocess the input any way you seem fit.
         """
-
-        return normalize(input_x)
-       
-      
-    
-
+        print(input_x)
+        return input_x
 
     def sigmoid(self, x):
         """
