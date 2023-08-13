@@ -20,6 +20,7 @@ class LogisticRegression:
         Preprocess the input any way you seem fit.
         """
         print(input_x)
+        #This is just testing
         return input_x
 
     def sigmoid(self, x):
