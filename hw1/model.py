@@ -179,9 +179,8 @@ class LinearClassifier:
 
 lr=LogisticRegression()
 import os
-# data=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\train_x.npy')
-# print(data)
-data=np.array([[1,2],[3,4],[5,9],[8,7]])
-lr.preprocess(data)
-test=lr.sigmoid(data)
-print(test)
+x=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\FML\HW1\cs725-hw\hw1\data\binary\train_x.npy')
+y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\FML\HW1\cs725-hw\hw1\data\binary\train_y.npy')
+print(x,y)
+print(lr.calculate_loss(x,y))
+
