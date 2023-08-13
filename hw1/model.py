@@ -58,8 +58,7 @@ class LogisticRegression:
 
     def sigmoid(self, x):
 
-        print(self.weights)
-        print(x)
+
         ones_column=np.ones((x.shape[0], 1))
         new_array = np.hstack((ones_column,x))
         print(new_array)
@@ -67,6 +66,10 @@ class LogisticRegression:
 
         z=-z
         funz=1/(1+np.exp(z))
+        # print("In sigmoid")
+        # print("weights :",self.weights)
+        # print("x :",new_array)
+        print("sig(z) :",funz)
         """
         Implement a sigmoid function if you need it. Ignore otherwise.
         """
@@ -81,10 +84,18 @@ class LogisticRegression:
         Returns: a single scalar value corresponding to the loss.
         """
         p=self.sigmoid(input_x)
-        cost=np.sum(input_y*np.log(p)+(1-input_y)*np.log(1-p))
+        cost=-np.sum(input_y*np.log(p)+(1-input_y)*np.log(1-p))
         return cost
 
     def calculate_gradient(self, input_x, input_y):
+        #Gradient of logistic loss dJ/dw is (p-y)*x where p is sig(w.x)
+        ones_column=np.ones((input_x.shape[0], 1))
+        new_array = np.hstack((ones_column,input_x))
+        temp=self.sigmoid(input_x)-input_y
+        print(temp)
+        gradient=np.transpose(new_array).dot(temp)
+        print(gradient)
+
         """
         Arguments:
         input_x -- NumPy array with shape (N, self.d) where N = total number of samples
@@ -92,7 +103,7 @@ class LogisticRegression:
         Returns: the gradient of loss function wrt weights.
         Ensure that gradient.shape == self.weights.shape.
         """
-        pass
+        return gradient
 
     def update_weights(self, grad, learning_rate, momentum):
         """
@@ -179,8 +190,9 @@ class LinearClassifier:
 
 lr=LogisticRegression()
 import os
-x=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\FML\HW1\cs725-hw\hw1\data\binary\train_x.npy')
-y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\FML\HW1\cs725-hw\hw1\data\binary\train_y.npy')
-print(x,y)
-print(lr.calculate_loss(x,y))
-
+# data=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\train_x.npy')
+# print(data)
+data=np.array([[1,2],[3,4],[5,9],[8,7]])
+lr.preprocess(data)
+test=lr.sigmoid(data)
+print(test)
