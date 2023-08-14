@@ -207,6 +207,8 @@ lr=LogisticRegression()
 import os
 data=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\binary\train_x.npy')
 y=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\binary\train_y.npy')
+# data=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_x.npy')
+# y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_y.npy')
 y=y.reshape((150,1))
 print(data.shape)
 print(y.shape)

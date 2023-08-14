@@ -20,7 +20,7 @@ def main():
     valid_y = np.load(f'C:/IITB/FML/HW1/cs725-hw/hw1/data/{args.dataset}/val_y.npy')
 
     print(f'Loaded training dataset\nInput(x) shape = {train_x.shape}, Target(y) shape = {train_y.shape}')
-    print(f'Loaded validation dataset\nInput(x) shape = {valid_x.shape}, Target(y) shape = {valid_y.shape}')
+    # print(f'Loaded validation dataset\nInput(x) shape = {valid_x.shape}, Target(y) shape = {valid_y.shape}')
 
     # Prepare the model
     model = load_model(args.model)()
