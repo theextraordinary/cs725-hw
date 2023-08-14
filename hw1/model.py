@@ -198,20 +198,22 @@ lr=LogisticRegression()
 import os
 data=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\binary\train_x.npy')
 y=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\binary\train_y.npy')
+# data=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_x.npy')
+# y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_y.npy')
 y=y.reshape((150,1))
 print(data.shape)
 print(y.shape)
 # data=np.array([[1,2],[3,4],[5,9],[8,7]])
 # y=np.array([0,0,1,1]).reshape((4,1))
-data=lr.preprocess(data)
-for i in range(500):
-    print("Epoch :",(i+1))
-    print("weights :\n",lr.weights)
-    loss=lr.calculate_loss(data,y)
-    print("loss :\n",loss)
-    grad=lr.calculate_gradient(data,y)
-    lr.update_weights(grad,0.3,1)
-    print("---------------------------------------------------------------")
+# data=lr.preprocess(data)
+# for i in range(1000):
+#     print("Epoch :",(i+1))
+#     print("weights :\n",lr.weights)
+#     loss=lr.calculate_loss(data,y)
+#     print("loss :\n",loss)
+#     grad=lr.calculate_gradient(data,y)
+#     lr.update_weights(grad,0.2,1)
+#     print("---------------------------------------------------------------")
 
 
 

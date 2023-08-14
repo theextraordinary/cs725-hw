@@ -16,8 +16,10 @@ def main():
     os.makedirs(f'{args.log_dir}/{args.dataset}/', exist_ok=True)
 
     # Load the dataset
-    train_x = np.load(f'./data/{args.dataset}/train_x.npy')
-    train_y = np.load(f'./data/{args.dataset}/train_y.npy')
+    train_x=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_x.npy')
+    
+    train_y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_y.npy')
+    
     print(f'Loaded training dataset\nInput(x) shape = {train_x.shape}, Target(y) shape = {train_y.shape}')
 
     # Prepare the model
@@ -26,7 +28,7 @@ def main():
 
     # Preprocess the data
     train_x = model.preprocess(train_x)
-
+    train_y=train_y.reshape((train_y.shape[0],1))
     # Visualization trackers
     train_losses = []
     train_accs = []
