@@ -13,11 +13,11 @@ def main():
     os.makedirs(f'{args.log_dir}/{args.dataset}/', exist_ok=True)
 
     # Load the dataset
-    train_x = np.load(f'./data/{args.dataset}/train_x.npy')
-    train_y = np.load(f'./data/{args.dataset}/train_y.npy')
+    train_x = np.load(f'C:/IITB/FML/HW1/cs725-hw/hw1/data/{args.dataset}/train_x.npy')
+    train_y = np.load(f'C:/IITB/FML/HW1/cs725-hw/hw1/data/{args.dataset}/train_y.npy')
 
-    valid_x = np.load(f'./data/{args.dataset}/val_x.npy')
-    valid_y = np.load(f'./data/{args.dataset}/val_y.npy')
+    valid_x = np.load(f'C:/IITB/FML/HW1/cs725-hw/hw1/data/{args.dataset}/val_x.npy')
+    valid_y = np.load(f'C:/IITB/FML/HW1/cs725-hw/hw1/data/{args.dataset}/val_y.npy')
 
     print(f'Loaded training dataset\nInput(x) shape = {train_x.shape}, Target(y) shape = {train_y.shape}')
     print(f'Loaded validation dataset\nInput(x) shape = {valid_x.shape}, Target(y) shape = {valid_y.shape}')
@@ -31,6 +31,7 @@ def main():
     # Preprocess the data
     train_x = model.preprocess(train_x)
     valid_x = model.preprocess(valid_x) 
+    train_y=train_y.reshape((train_y.shape[0],1))
     """
     Note: ideally we should be using transform parameters from training data itself, 
     but here the datasets are so small that it doesn't significantly affect the performance

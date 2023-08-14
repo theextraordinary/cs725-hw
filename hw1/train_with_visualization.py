@@ -16,8 +16,9 @@ def main():
     os.makedirs(f'{args.log_dir}/{args.dataset}/', exist_ok=True)
 
     # Load the dataset
-    train_x = np.load(f'./data/{args.dataset}/train_x.npy')
-    train_y = np.load(f'./data/{args.dataset}/train_y.npy')
+    train_x = np.load(f'C:/IITB/FML/HW1/cs725-hw/hw1/data/{args.dataset}/train_x.npy')
+    train_y = np.load(f'C:/IITB/FML/HW1/cs725-hw/hw1/data/{args.dataset}/train_y.npy')
+    # print(train_y)
     print(f'Loaded training dataset\nInput(x) shape = {train_x.shape}, Target(y) shape = {train_y.shape}')
 
     # Prepare the model
@@ -26,16 +27,16 @@ def main():
 
     # Preprocess the data
     train_x = model.preprocess(train_x)
-
+    train_y=train_y.reshape((train_y.shape[0],1))
     # Visualization trackers
     train_losses = []
     train_accs = []
     x1, x2, eval_x = gen_meshgrid(args.grid_size, train_x, args.epsilon)
     pred_eval_y = []
-
     print('==== Training ====')
     pbar = tqdm(range(args.num_epochs))
     for e in pbar:
+        print("Epoch ",e)
         # calculate gradient. ensure grad.shape == model.weights.shape
         grad = model.calculate_gradient(train_x, train_y)
         assert grad.shape == model.weights.shape, f'Shape mismatch for gradient and weights. Gradient shape = {grad.shape}. Weights shape = {model.weights.shape}'
@@ -52,6 +53,9 @@ def main():
         train_accs.append(train_acc)
 
         pbar.set_description(f'train_loss={train_loss:.2f}, train_acc={train_acc * 100:.2f}%')
+        print("---------------------------------------------------------------------------------------------------")
+    print(train_losses)
+    print(train_accs)
 
     print(f'==== Training completed. ====')
     
