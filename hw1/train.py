@@ -13,11 +13,11 @@ def main():
     os.makedirs(f'{args.log_dir}/{args.dataset}/', exist_ok=True)
 
     # Load the dataset
-    train_x=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\train_x.npy')
-    train_y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\train_y.npy')
+    train_x=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\train_x.npy')
+    train_y=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\train_y.npy')
 
-    valid_x=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\val_x.npy')
-    valid_y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\val_y.npy')
+    valid_x=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\val_x.npy')
+    valid_y=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\val_y.npy')
 
     print(f'Loaded training dataset\nInput(x) shape = {train_x.shape}, Target(y) shape = {train_y.shape}')
     # print(f'Loaded validation dataset\nInput(x) shape = {valid_x.shape}, Target(y) shape = {valid_y.shape}')
