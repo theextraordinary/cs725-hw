@@ -46,6 +46,7 @@ class LogisticRegression:
         self.num_classes = 1 # single set of weights needed
         self.d = 2 # input space is 2D. easier to visualize
         self.weights = np.zeros((self.d+1, self.num_classes))
+        # self.velocity=np.zeros((self.d+1,self.num_classes))
     
 
     
@@ -54,52 +55,52 @@ class LogisticRegression:
         Preprocess the input any way you seem fit.
         """
         # print(input_x)
-        return input_x
+        return standardize(input_x)
+    
+    def hofx(self,x):
+        x=np.hstack((np.ones((x.shape[0],1)),x))
+        # print("In h(x):\n\n x shape:\n",x.shape)
+        # print("w shape:\n",self.weights.shape)
+        z=np.dot(x,self.weights)
+        # print("z shape:\n",z.shape)
+        return z
 
-    def sigmoid(self, x):
 
-
-        ones_column=np.ones((x.shape[0], 1))
-        new_array = np.hstack((ones_column,x))
-        # print(new_array)
-        z=new_array.dot(self.weights)
-        # print("z:\n",z)
-        temp=1+np.exp(-z)
-        # print("Temp:\n",temp)
-        funz=1/temp
-        # print("In sigmoid")
-        # print("weights :",self.weights)
-        # print("x :",new_array)
-        # print("sig(z) :",funz)
+    def sigmoid(self, z):
+        # print("In sigmoid:\n\n")
+        g=1/(1+np.exp(-z))
         """
         Implement a sigmoid function if you need it. Ignore otherwise.
         """
-        return funz 
+        return g
         
 
     def calculate_loss(self, input_x, input_y):
+        input_y=input_y.reshape((input_y.shape[0],1))
+        # print("In loss:\n\n")
         """
         Arguments:
         input_x -- NumPy array with shape (N, self.d) where N = total number of samples
         input_y -- NumPy array with shape (N,)
         Returns: a single scalar value corresponding to the loss.
         """
-        p=self.sigmoid(input_x)
-        # print(p.shape)
-        # print(input_y.shape)
-        cost=-1/(len(input_y))*(np.dot(np.transpose(input_y),np.log(p))+np.dot(np.transpose(1-input_y),np.log(1-p)))
-        # print("Cost",cost)
+        p=self.sigmoid(self.hofx(input_x))
+        cost=-1/input_x.shape[0]*(np.dot(np.transpose(input_y),np.log(p))+np.dot(np.transpose(1-input_y),np.log(1-p)))
+        # print("Cost:",cost)
         return cost[0][0]
 
     def calculate_gradient(self, input_x, input_y):
+        input_y=input_y.reshape((input_y.shape[0],1))
+        # print("In gradient:\n\n")
         #Gradient of logistic loss dJ/dw is (p-y)*x where p is sig(w.x)
-        ones_column=np.ones((input_x.shape[0], 1))
-        new_array = np.hstack((ones_column,input_x))
-        temp=self.sigmoid(input_x)-input_y
-        # print(temp)
-        gradient=np.dot(np.transpose(new_array),temp)
-        # print(gradient)
-
+        p=self.sigmoid(self.hofx(input_x))
+        # print("p shape",p.shape)
+        # print("shape y",input_y.shape)
+        temp=p-input_y
+        x=np.hstack((np.ones((input_x.shape[0],1)),input_x))
+        # print("x shape",x.shape)
+        # print("temp",temp.shape)
+        gradient=np.dot(np.transpose(x),temp)
         """
         Arguments:
         input_x -- NumPy array with shape (N, self.d) where N = total number of samples
@@ -107,10 +108,10 @@ class LogisticRegression:
         Returns: the gradient of loss function wrt weights.
         Ensure that gradient.shape == self.weights.shape.
         """
-        return gradient
+        return (1/input_x.shape[0])*gradient
 
     def update_weights(self, grad, learning_rate, momentum):
-        
+        # print("In update:\n\n")
         
         """
         Arguments:
@@ -120,29 +121,29 @@ class LogisticRegression:
         Returns: nothing
         The function should update `self.weights` with the help of `grad`, `learning_rate` and `momentum`
         """
-        print("Before",self.weights)
+        # self.velocity=momentum*self.velocity+(1-momentum)*grad
+        # self.weights=self.weights-learning_rate*self.velocity
         self.weights=self.weights-learning_rate*grad*1/150
-        print("After",self.weights)
         pass
 
     def get_prediction(self, input_x):
+        # print("In prediction:\n\n")
         """
         Arguments:
         input_x -- NumPy array with shape (N, self.d) where N = total number of samples
         Returns: a NumPy array with shape (N,) 
         The returned array must be the list of predicted class labels for every input in `input_x`
         """
-
-        z=self.sigmoid(input_x)
-        # print(z)
-        new_z=[]
-        for i in z:
+        z=self.hofx(input_x)
+        g=self.sigmoid(z)
+        y=[]
+        for i in g:
             if i>=0.5:
-                new_z.append(1)
+                y.append(1)
             else:
-                new_z.append(0)
-        # print(new_z)
-        return np.array(new_z)
+                y.append(0)
+        y=np.array(y)
+        return y
 
 class LinearClassifier:
     def __init__(self):
@@ -162,24 +163,31 @@ class LinearClassifier:
         """
         return standardize(train_x,self.d)
 
-    def sigmoid(self, x):
-        ones_column=np.ones((x.shape[0],1))
-        new_array = np.hstack((ones_column,x))
-        temp=np.dot(new_array,self.weights)
-        sig=1/temp
+    def hofx(self,x):
+        x=np.hstack((np.ones((x.shape[0],1)),x))
+        # print("In h(x):\n\n x shape:\n",x.shape)
+        # print("w shape:\n",self.weights.shape)
+        z=np.dot(x,self.weights)
+        # print("z shape:\n",z.shape)
+        return z
+
+
+    def sigmoid(self, z):
+        # print("In sigmoid:\n\n")
+        g=1/(1+np.exp(-z))
         """
         Implement a sigmoid function if you need it. Ignore otherwise.
         """
-        return sig
-    def preprocess_y(self,classs,input_y):
+        return g
+        
+    def process_y(self,classs,input_y):
         new_y=[]
         for i in input_y:
-          if (i!=classs):
-              new_y.append(0)
-          else:
-              new_y.append(1)
-        return np.array(new_y)   
-
+            if i!=classs:
+                new_y.append(0)
+            else:
+                new_y.append(1)
+        return np.array(new_y)
 
     def calculate_loss(self, input_x, input_y):
         y0=self.preprocess_y(0,input_y)
@@ -200,7 +208,16 @@ class LinearClassifier:
         input_y -- NumPy array with shape (N,)
         Returns: a single scalar value corresponding to the loss.
         """
-        
+        input_y0=self.process_y(0,input_y)
+        input_y1=self.process_y(1,input_y)
+        input_y2=self.process_y(2,input_y)
+        m=input_x.shape[0]
+        p=self.sigmoid(self.hofx(input_x))
+        loss0=-1/m*(np.dot(np.transpose(input_y0),np.log(p[:,0]))+np.dot(np.transpose(1-input_y0),np.log(1-p[:,0])))
+        loss1=-1/m*(np.dot(np.transpose(input_y1),np.log(p[:,1]))+np.dot(np.transpose(1-input_y1),np.log(1-p[:,1])))
+        loss2=-1/m*(np.dot(np.transpose(input_y2),np.log(p[:,2]))+np.dot(np.transpose(1-input_y2),np.log(1-p[:,2])))
+
+        return loss0+loss1+loss2/3
 
     def calculate_gradient(self, input_x, input_y):
 
@@ -224,6 +241,15 @@ class LinearClassifier:
         Returns: the gradient of loss function wrt weights.
         Ensure that gradient.shape == self.weights.shape.
         """
+        p=self.sigmoid(self.hofx(input_x))
+        input_y0=self.process_y(0,input_y).reshape((input_y.shape[0],1))
+        input_y1=self.process_y(1,input_y).reshape((input_y.shape[0],1))
+        input_y2=self.process_y(2,input_y).reshape((input_y.shape[0],1))
+        input_y=np.hstack((input_y0,input_y1,input_y2))
+        # print("Input y: ",input_y)
+        temp=p-input_y
+        x=np.hstack((np.ones((input_x.shape[0],1)),input_x))
+        gradient=np.dot(np.transpose(x),temp)
         return gradient
 
     def update_weights(self, grad, learning_rate, momentum):
@@ -239,6 +265,7 @@ class LinearClassifier:
         Returns: nothing
         The function should update `self.weights` with the help of `grad`, `learning_rate` and `momentum`
         """
+        self.weights=self.weights-learning_rate*grad
         pass
 
     def get_prediction(self, input_x):
@@ -257,17 +284,15 @@ class LinearClassifier:
         """
         pass
 
-# lr=LogisticRegression()
-# import os
-# # data=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\binary\train_x.npy')
-# # y=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\binary\train_y.npy')
+lr=LogisticRegression()
+import os
+data=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\binary\train_x.npy')
+y=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\binary\train_y.npy')
 # data=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_x.npy')
 # y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_y.npy')
-# y=y.reshape((150,1))
-
-
-# print(data.shape)
-# print(y.shape)
+y=y.reshape((150,1))
+print(data.shape)
+print(y.shape)
 # data=np.array([[1,2],[3,4],[5,9],[8,7]])
 # y=np.array([0,0,1,1]).reshape((4,1))
 # data=lr.preprocess(data)
@@ -280,7 +305,5 @@ class LinearClassifier:
 #     lr.update_weights(grad,0.2,1)
 #     print("---------------------------------------------------------------")
 
-lc=LinearClassifier()
-import os
-data=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\train_x.npy')
-y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\train_y.npy')
+
+
