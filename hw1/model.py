@@ -1,16 +1,16 @@
 import numpy as np
 
 
-def standardize(input_x):
+def standardize(input_x,d):
     means=[]
-    for i in range(2):
+    for i in range(d):
         means.append(np.mean(input_x[:,i]))
     # print(means)
     stds=[]
-    for i in range(2):
+    for i in range(d):
         stds.append(np.std(input_x[:,i]))
     # print(stds)
-    for i in range(2):
+    for i in range(d):
         x=input_x[:,i]
         x=(x-means[i])/stds[i]
         # print(x)
@@ -76,6 +76,7 @@ class LogisticRegression:
         
 
     def calculate_loss(self, input_x, input_y):
+        input_y=input_y.reshape((input_y.shape[0],1))
         # print("In loss:\n\n")
         """
         Arguments:
@@ -89,6 +90,7 @@ class LogisticRegression:
         return cost[0][0]
 
     def calculate_gradient(self, input_x, input_y):
+        input_y=input_y.reshape((input_y.shape[0],1))
         # print("In gradient:\n\n")
         #Gradient of logistic loss dJ/dw is (p-y)*x where p is sig(w.x)
         p=self.sigmoid(self.hofx(input_x))
@@ -159,7 +161,7 @@ class LinearClassifier:
         """
         Preprocess the input any way you seem fit.
         """
-        return standardize(train_x)
+        return standardize(train_x,self.d)
 
     def hofx(self,x):
         x=np.hstack((np.ones((x.shape[0],1)),x))
@@ -188,7 +190,6 @@ class LinearClassifier:
         return np.array(new_y)
 
     def calculate_loss(self, input_x, input_y):
-        print("yo")
         """
         Arguments:
         input_x -- NumPy array with shape (N, self.d) where N = total number of samples
@@ -200,11 +201,11 @@ class LinearClassifier:
         input_y2=self.process_y(2,input_y)
         m=input_x.shape[0]
         p=self.sigmoid(self.hofx(input_x))
-        loss0=1/m*(np.dot(-np.transpose(input_y0),np.log(p[:,0]))-np.dot(np.transpose(1-input_y0),np.log(1-p[:,0])))
-        loss1=1/m*(np.dot(-np.transpose(input_y1),np.log(p[:,1]))-np.dot(np.transpose(1-input_y1),np.log(1-p[:,1])))
-        loss2=1/m*(np.dot(-np.transpose(input_y2),np.log(p[:,2]))-np.dot(np.transpose(1-input_y2),np.log(1-p[:,2])))
+        loss0=-1/m*(np.dot(np.transpose(input_y0),np.log(p[:,0]))+np.dot(np.transpose(1-input_y0),np.log(1-p[:,0])))
+        loss1=-1/m*(np.dot(np.transpose(input_y1),np.log(p[:,1]))+np.dot(np.transpose(1-input_y1),np.log(1-p[:,1])))
+        loss2=-1/m*(np.dot(np.transpose(input_y2),np.log(p[:,2]))+np.dot(np.transpose(1-input_y2),np.log(1-p[:,2])))
 
-        return [loss0,loss1,loss2]
+        return loss0+loss1+loss2/3
 
     def calculate_gradient(self, input_x, input_y):
         """
@@ -215,10 +216,11 @@ class LinearClassifier:
         Ensure that gradient.shape == self.weights.shape.
         """
         p=self.sigmoid(self.hofx(input_x))
-        input_y0=self.process_y(0,input_y)
-        input_y1=self.process_y(1,input_y)
-        input_y2=self.process_y(2,input_y)
+        input_y0=self.process_y(0,input_y).reshape((input_y.shape[0],1))
+        input_y1=self.process_y(1,input_y).reshape((input_y.shape[0],1))
+        input_y2=self.process_y(2,input_y).reshape((input_y.shape[0],1))
         input_y=np.hstack((input_y0,input_y1,input_y2))
+        # print("Input y: ",input_y)
         temp=p-input_y
         x=np.hstack((np.ones((input_x.shape[0],1)),input_x))
         gradient=np.dot(np.transpose(x),temp)
@@ -244,9 +246,10 @@ class LinearClassifier:
         The returned array must be the list of predicted class labels for every input in `input_x`
         """
         y=self.sigmoid(self.hofx(input_x))
+        # print("Y ",y)
         new_y=[]
         for i in y:
-            new_y.append(np.argmax(i[0]))
+            new_y.append(np.argmax(i))
         
         return np.array(new_y)
 
