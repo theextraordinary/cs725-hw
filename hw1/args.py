@@ -3,8 +3,8 @@ from dataclasses import dataclass
 @dataclass
 class TrainingArguments:
     log_dir: str = './checkpoints/'    # Directory where the models will be stored
-    dataset: str = 'binary'            # Dataset to run the experiments on (binary/digits)
-    model: str = 'logistic_regression' # Model to use (linear_classifier/logistic_regression)
+    dataset: str = 'iris'            # Dataset to run the experiments on (binary/digits)
+    model: str = 'linear_classifier' # Model to use (linear_classifier/logistic_regression)
     num_epochs: int = 10               # Number of epochs for the optimization
     learning_rate: float = 1e-4        # Learning rate for the optimization
     momentum: float = 0                # Momentum term for the optimization
@@ -12,8 +12,8 @@ class TrainingArguments:
 @dataclass
 class TrainingWithVisualizationArguments:
     log_dir: str = './checkpoints/'    # Directory where the models will be stored
-    num_epochs: int = 10               # Number of epochs for the optimization
-    learning_rate: float = 1e-4        # Learning rate for the optimization
+    num_epochs: int = 10            # Number of epochs for the optimization
+    learning_rate: float = 0.001        # Learning rate for the optimization
     momentum: float = 0                # Momentum term for the optimization
     grid_size: int = 128               # How many points should be evaluated on one axis? Total number of evaluation points is grid_size * grid_size
     epsilon: float = 0.75              # Padding around the [x1_min,x2_max], [y1_min, y2_max] box

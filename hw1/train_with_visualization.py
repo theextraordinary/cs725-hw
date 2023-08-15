@@ -9,16 +9,16 @@ from utils import parse_visualization_args, load_model, get_model_name, gen_mesh
 def main():
     args = parse_visualization_args()
     print(args)
-    args.dataset = 'binary'
-    args.model = 'logistic_regression'
+    args.dataset = 'iris'
+    args.model = 'linear_classifier'
 
     # Create `log_dir` if it doesn't exist
     os.makedirs(f'{args.log_dir}/{args.dataset}/', exist_ok=True)
 
     # Load the dataset
-    train_x=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_x.npy')
+    train_x=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\train_x.npy')
     
-    train_y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\binary\train_y.npy')
+    train_y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\train_y.npy')
     
     print(f'Loaded training dataset\nInput(x) shape = {train_x.shape}, Target(y) shape = {train_y.shape}')
 
@@ -54,7 +54,7 @@ def main():
         train_accs.append(train_acc)
 
         pbar.set_description(f'train_loss={train_loss:.2f}, train_acc={train_acc * 100:.2f}%')
-
+    # print(train_accs)
     print(f'==== Training completed. ====')
     
     fig = plt.figure()
