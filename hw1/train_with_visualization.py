@@ -28,6 +28,7 @@ def main():
     # Preprocess the data
     train_x = model.preprocess(train_x)
     train_y=train_y.reshape((train_y.shape[0],1))
+    # print("trainy",train_y)
     # Visualization trackers
     train_losses = []
     train_accs = []
@@ -36,7 +37,7 @@ def main():
     print('==== Training ====')
     pbar = tqdm(range(args.num_epochs))
     for e in pbar:
-        print("Epoch ",e)
+        # print("Epoch ",e)
         # calculate gradient. ensure grad.shape == model.weights.shape
         grad = model.calculate_gradient(train_x, train_y)
         assert grad.shape == model.weights.shape, f'Shape mismatch for gradient and weights. Gradient shape = {grad.shape}. Weights shape = {model.weights.shape}'
@@ -46,16 +47,19 @@ def main():
         # weight update completed, calculate loss/accuracy on train and validation splits
         train_loss = model.calculate_loss(train_x, train_y)
         train_y_pred = model.get_prediction(train_x)
-        train_acc = (train_y_pred == train_y).mean()
+        # print(train_y_pred,train_y)
+        tempy=train_y.reshape((train_y.shape[0]))
+        # print(np.sum(temp),train_y.shape,train_y_pred.shape)
+        train_acc = (train_y_pred==tempy).mean()
         
         pred_eval_y.append(model.get_prediction(eval_x))
         train_losses.append(train_loss)
         train_accs.append(train_acc)
 
         pbar.set_description(f'train_loss={train_loss:.2f}, train_acc={train_acc * 100:.2f}%')
-        print("---------------------------------------------------------------------------------------------------")
-    print(train_losses)
-    print(train_accs)
+        # print("---------------------------------------------------------------------------------------------------")
+    # print(train_losses)
+    # print(train_accs)
 
     print(f'==== Training completed. ====')
     
