@@ -13,14 +13,14 @@ def main():
     os.makedirs(f'{args.log_dir}/{args.dataset}/', exist_ok=True)
 
     # Load the dataset
-    train_x=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\train_x.npy')
-    train_y=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\train_y.npy')
+    train_x = np.load(f'./data/{args.dataset}/train_x.npy')
+    train_y = np.load(f'./data/{args.dataset}/train_y.npy')
 
-    valid_x=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\val_x.npy')
-    valid_y=np.load(r'C:\IITB\FML\HW1\cs725-hw\hw1\data\iris\val_y.npy')
+    valid_x = np.load(f'./data/{args.dataset}/val_x.npy')
+    valid_y = np.load(f'./data/{args.dataset}/val_y.npy')
 
     print(f'Loaded training dataset\nInput(x) shape = {train_x.shape}, Target(y) shape = {train_y.shape}')
-    # print(f'Loaded validation dataset\nInput(x) shape = {valid_x.shape}, Target(y) shape = {valid_y.shape}')
+    print(f'Loaded validation dataset\nInput(x) shape = {valid_x.shape}, Target(y) shape = {valid_y.shape}')
 
     # Prepare the model
     model = load_model(args.model)()
@@ -31,8 +31,6 @@ def main():
     # Preprocess the data
     train_x = model.preprocess(train_x)
     valid_x = model.preprocess(valid_x) 
-    # train_y=train_y.reshape((train_y.shape[0],1))
-    # valid_y=valid_y.reshape((valid_y.shape[0],1))
     """
     Note: ideally we should be using transform parameters from training data itself, 
     but here the datasets are so small that it doesn't significantly affect the performance
@@ -51,19 +49,15 @@ def main():
         grad = model.calculate_gradient(train_x, train_y)
         assert grad.shape == model.weights.shape, f'Shape mismatch for gradient and weights. Gradient shape = {grad.shape}. Weights shape = {model.weights.shape}'
         # update the params
-        # print("Weights: ",model.weights)
         model.update_weights(grad, args.learning_rate, args.momentum)
 
         # weight update completed, calculate loss/accuracy on train and validation splits
         train_loss = model.calculate_loss(train_x, train_y)
         valid_loss = model.calculate_loss(valid_x, valid_y)
-        
+
         train_y_pred = model.get_prediction(train_x)
-        # print(train_y,train_y_pred)
-        # tempy=train_y.reshape((train_y.shape[0]))
         train_acc = (train_y_pred == train_y).mean()
         valid_y_pred = model.get_prediction(valid_x)
-        # tempv=valid_y.reshape((valid_y.shape[0]))
         valid_acc = (valid_y_pred == valid_y).mean()
 
         train_losses.append(train_loss)
@@ -78,14 +72,9 @@ def main():
             best_acc_epoch = e+1
             print(f'Saved weights at epoch {e+1}, valid_acc = {valid_acc}, best_valid_acc = {best_valid_acc}')
         
-        
         pbar.set_description(f'train_loss={train_loss:.2f}, valid_loss={valid_loss:.2f}, valid_acc={valid_acc:.2f}')
 
     print(f'==== Training completed. best_valid_acc = {best_valid_acc * 100:.2f}% obtained at epoch {best_acc_epoch}. ====')
-    # print(train_accs)
-    # print(valid_accs)
-    # print(train_losses)
-    # print(valid_losses)
 
     # Save training plot
     plt.clf()

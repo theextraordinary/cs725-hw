@@ -24,7 +24,7 @@ def get_model_name(args):
     return f'{args.log_dir}/{args.dataset}/num_epochs={args.num_epochs}.learning_rate={args.learning_rate}.momentum={args.momentum}'
 
 def gen_meshgrid(grid_size, train_x, epsilon):
-    assert train_x.shape[1] == 4
+    assert train_x.shape[1] == 2
     x1 = train_x[:, 0]
     x1 = np.linspace(x1.min() - epsilon, x1.max() + epsilon, grid_size)
     x2 = train_x[:, 1]

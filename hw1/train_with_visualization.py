@@ -9,17 +9,15 @@ from utils import parse_visualization_args, load_model, get_model_name, gen_mesh
 def main():
     args = parse_visualization_args()
     print(args)
-    args.dataset = 'iris'
-    args.model = 'linear_classifier'
+    args.dataset = 'binary'
+    args.model = 'logistic_regression'
 
     # Create `log_dir` if it doesn't exist
     os.makedirs(f'{args.log_dir}/{args.dataset}/', exist_ok=True)
 
     # Load the dataset
-    train_x=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\train_x.npy')
-    
-    train_y=np.load(r'C:\Users\tanis\Desktop\sem1 mtech\cs725-hw-main\hw1\data\iris\train_y.npy')
-    
+    train_x = np.load(f'./data/{args.dataset}/train_x.npy')
+    train_y = np.load(f'./data/{args.dataset}/train_y.npy')
     print(f'Loaded training dataset\nInput(x) shape = {train_x.shape}, Target(y) shape = {train_y.shape}')
 
     # Prepare the model
@@ -28,20 +26,16 @@ def main():
 
     # Preprocess the data
     train_x = model.preprocess(train_x)
-    # train_y=train_y.reshape((train_y.shape[0],1))
-    # print("trainy",train_y)
+
     # Visualization trackers
     train_losses = []
     train_accs = []
-    
-    # x1, x2, eval_x = gen_meshgrid(args.grid_size, train_x, args.epsilon)
-    eval_x=train_x[0:50,:]
+    x1, x2, eval_x = gen_meshgrid(args.grid_size, train_x, args.epsilon)
     pred_eval_y = []
-    print(eval_x.shape)
+
     print('==== Training ====')
     pbar = tqdm(range(args.num_epochs))
     for e in pbar:
-        # print("Epoch ",e)
         # calculate gradient. ensure grad.shape == model.weights.shape
         grad = model.calculate_gradient(train_x, train_y)
         assert grad.shape == model.weights.shape, f'Shape mismatch for gradient and weights. Gradient shape = {grad.shape}. Weights shape = {model.weights.shape}'
@@ -51,19 +45,13 @@ def main():
         # weight update completed, calculate loss/accuracy on train and validation splits
         train_loss = model.calculate_loss(train_x, train_y)
         train_y_pred = model.get_prediction(train_x)
-        # print(train_y_pred,train_y)
-        # tempy=train_y.reshape((train_y.shape[0]))
-        # print(np.sum(temp),train_y.shape,train_y_pred.shape)
-        train_acc = (train_y_pred==train_y).mean()
+        train_acc = (train_y_pred == train_y).mean()
         
         pred_eval_y.append(model.get_prediction(eval_x))
         train_losses.append(train_loss)
         train_accs.append(train_acc)
 
         pbar.set_description(f'train_loss={train_loss:.2f}, train_acc={train_acc * 100:.2f}%')
-        # print("---------------------------------------------------------------------------------------------------")
-    # print(train_losses)
-    # print(train_accs)
 
     print(f'==== Training completed. ====')
     

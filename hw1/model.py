@@ -1,38 +1,7 @@
 import numpy as np
 
 
-def standardize(input_x,d):
-    means=[]
-    for i in range(d):
-        means.append(np.mean(input_x[:,i]))
-    # print(means)
-    stds=[]
-    for i in range(d):
-        stds.append(np.std(input_x[:,i]))
-    # print(stds)
-    for i in range(d):
-        x=input_x[:,i]
-        x=(x-means[i])/stds[i]
-        # print(x)
-        input_x[:,i]=x
-    # print(input_x)
-    return input_x
 
-def normalize(input_x):
-    maxv=[]
-    minv=[]
-    for  i in range(2):
-       minv.append(np.min(input_x[:,i]))
-       maxv.append(np.max(input_x[:,i]))
-
-    for i in range(2):
-        x=input_x[:,i]
-        x=(x-minv[i])/(maxv[i]-minv[i])
-        input_x[:,i]=x
-    print(maxv)
-    print(minv)
-    print(input_x)
-    return input_x    
 
 class LogisticRegression:
     def __init__(self):
@@ -45,24 +14,53 @@ class LogisticRegression:
         """
         self.num_classes = 1 # single set of weights needed
         self.d = 2 # input space is 2D. easier to visualize
-        self.weights = np.zeros((self.d+1, self.num_classes))
-        # self.velocity=np.zeros((self.d+1,self.num_classes))
-    
+        self.weights = np.random.standard_normal((self.d+1, self.num_classes))
+        self.velocity=0
+
+    def standardize(self,input_x):
+        means=[]
+        for i in range(self.d):
+            means.append(np.mean(input_x[:,i]))
+        # print(means)
+        stds=[]
+        for i in range(self.d):
+            stds.append(np.std(input_x[:,i]))
+        # print(stds)
+        for i in range(self.d):
+            x=input_x[:,i]
+            x=(x-means[i])/stds[i]
+            # print(x)
+            input_x[:,i]=x
+        # print(input_x)
+        return input_x
+
+    def normalize(self,input_x):
+        maxv=[]
+        minv=[]
+        for  i in range(self.d):
+            minv.append(np.min(input_x[:,i]))
+            maxv.append(np.max(input_x[:,i]))
+
+        for i in range(self.d):
+            x=input_x[:,i]
+            x=(x-minv[i])/(maxv[i]-minv[i])
+            input_x[:,i]=x
+        return input_x       
 
     
     def preprocess(self, input_x):
         """
         Preprocess the input any way you seem fit.
         """
-        # print(input_x)
-        return standardize(input_x)
+        return self.standardize(input_x)
+
     
     def hofx(self,x):
         x=np.hstack((np.ones((x.shape[0],1)),x))
-        # print("In h(x):\n\n x shape:\n",x.shape)
-        # print("w shape:\n",self.weights.shape)
+        # print("In h(x):\n\n x :\n",x[0:10,:])
+        # print("w shape:\n",self.weights)
         z=np.dot(x,self.weights)
-        # print("z shape:\n",z.shape)
+        # print("z :\n",z)
         return z
 
 
@@ -94,13 +92,14 @@ class LogisticRegression:
         # print("In gradient:\n\n")
         #Gradient of logistic loss dJ/dw is (p-y)*x where p is sig(w.x)
         p=self.sigmoid(self.hofx(input_x))
-        # print("p shape",p.shape)
-        # print("shape y",input_y.shape)
+        # print("p ",p)
+        # print("y",input_y)
         temp=p-input_y
         x=np.hstack((np.ones((input_x.shape[0],1)),input_x))
-        # print("x shape",x.shape)
-        # print("temp",temp.shape)
+        # print("x:\n",x)
+        # print("temp:\n",temp)
         gradient=np.dot(np.transpose(x),temp)
+        # print("Gradient:\n",gradient)
         """
         Arguments:
         input_x -- NumPy array with shape (N, self.d) where N = total number of samples
@@ -108,7 +107,7 @@ class LogisticRegression:
         Returns: the gradient of loss function wrt weights.
         Ensure that gradient.shape == self.weights.shape.
         """
-        return (1/input_x.shape[0])*gradient
+        return gradient
 
     def update_weights(self, grad, learning_rate, momentum):
         # print("In update:\n\n")
@@ -121,10 +120,13 @@ class LogisticRegression:
         Returns: nothing
         The function should update `self.weights` with the help of `grad`, `learning_rate` and `momentum`
         """
-        # self.velocity=momentum*self.velocity+(1-momentum)*grad
+        self.velocity=momentum*self.velocity-learning_rate*grad
         # self.weights=self.weights-learning_rate*self.velocity
-        self.weights=self.weights-learning_rate*grad*1/150
-        pass
+        # print(grad,learning_rate)
+        # print(learning_rate*grad[0][0])
+        # print(grad.reshape((grad.shape[0]))*learning_rate)
+        # print("test:",grad*learning_rate)
+        self.weights=self.weights+self.velocity
 
     def get_prediction(self, input_x):
         # print("In prediction:\n\n")
@@ -134,16 +136,10 @@ class LogisticRegression:
         Returns: a NumPy array with shape (N,) 
         The returned array must be the list of predicted class labels for every input in `input_x`
         """
+        # print("Weigths: ",self.weights)
         z=self.hofx(input_x)
         g=self.sigmoid(z)
-        y=[]
-        for i in g:
-            if i>=0.5:
-                y.append(1)
-            else:
-                y.append(0)
-        y=np.array(y)
-        return y
+        return np.where(g > 0.5, 1, 0).reshape((-1,))
 
 class LinearClassifier:
     def __init__(self):
@@ -155,13 +151,45 @@ class LinearClassifier:
         """
         self.num_classes = 3 # 3 classes
         self.d = 4 # 4 dimensional features
-        self.weights = np.zeros((self.d+1, self.num_classes))
+        self.weights = np.random.standard_normal((self.d+1, self.num_classes))
+        self.velocity=0
+
+    def standardize(self,input_x):
+        means=[]
+        for i in range(self.d):
+            means.append(np.mean(input_x[:,i]))
+        # print(means)
+        stds=[]
+        for i in range(self.d):
+            stds.append(np.std(input_x[:,i]))
+        # print(stds)
+        for i in range(self.d):
+            x=input_x[:,i]
+            x=(x-means[i])/stds[i]
+            # print(x)
+            input_x[:,i]=x
+        # print(input_x)
+        return input_x
+
+    def normalize(self,input_x):
+        maxv=[]
+        minv=[]
+        for  i in range(self.d):
+            minv.append(np.min(input_x[:,i]))
+            maxv.append(np.max(input_x[:,i]))
+
+        for i in range(self.d):
+            x=input_x[:,i]
+            x=(x-minv[i])/(maxv[i]-minv[i])
+            input_x[:,i]=x
+        return input_x       
+
     
     def preprocess(self, train_x):
         """
         Preprocess the input any way you seem fit.
         """
-        return standardize(train_x,self.d)
+        return self.standardize(train_x)
 
     def hofx(self,x):
         x=np.hstack((np.ones((x.shape[0],1)),x))
@@ -236,7 +264,8 @@ class LinearClassifier:
         Returns: nothing
         The function should update `self.weights` with the help of `grad`, `learning_rate` and `momentum`
         """
-        self.weights=self.weights-learning_rate*grad
+        self.velocity=momentum*self.velocity-learning_rate*grad
+        self.weights=self.weights+self.velocity
         pass
 
     def get_prediction(self, input_x):
