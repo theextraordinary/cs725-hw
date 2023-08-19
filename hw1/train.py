@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from utils import parse_args, load_model, get_model_name
-
+# python train.py --dataset binary --model logistic_regression --num_epochs 200 --learning_rate 0.01 --momentum 0.9
+#  python train.py --dataset iris --model linear_classifier --num_epochs 200 --learning_rate 0.01 --momentum 0.9
 def main():
     args = parse_args()
     print(args)
