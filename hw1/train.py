@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from utils import parse_args, load_model, get_model_name
-# python train.py --dataset binary --model logistic_regression --num_epochs 200 --learning_rate 0.01 --momentum 0.9
+# python train.py --dataset binary --model logistic_regression --num_epochs 200 --learning_rate 0.01 --momentum 0.7
 #  python train.py --dataset iris --model linear_classifier --num_epochs 200 --learning_rate 0.01 --momentum 0.9
 def main():
     args = parse_args()
@@ -76,7 +76,8 @@ def main():
         pbar.set_description(f'train_loss={train_loss:.2f}, valid_loss={valid_loss:.2f}, valid_acc={valid_acc:.2f}')
 
     print(f'==== Training completed. best_valid_acc = {best_valid_acc * 100:.2f}% obtained at epoch {best_acc_epoch}. ====')
-
+    # print(model.weights)
+    # np.save(r"./submission/best_iris.weights.npy",model.weights)
     # Save training plot
     plt.clf()
     plt.plot(range(1, args.num_epochs+1), train_losses, label='Train loss')

@@ -23,3 +23,4 @@ class TrainingWithVisualizationArguments:
     gif_fps: int = 60                  # Animation FPS
     gif_bitrate: int = 1800            # Animation bitrate
     gif_dpi: int = 100                 # Animation DPI
+
