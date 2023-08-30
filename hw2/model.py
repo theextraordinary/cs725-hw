@@ -170,7 +170,7 @@ class LitGenericClassifier(pl.LightningModule):
         self.log('test_acc', acc)
         return {
             'test_loss': loss,
-            'test_acc': loss,
+            'test_acc': acc,
         }
     
     def predict(self, x):
@@ -193,7 +193,7 @@ class LitGenericClassifier(pl.LightningModule):
         """
         y_pred=self.model(x)
         # y_pred=torch.softmax
-        return y_pred.argmax(dim=1).long()
+        return y_pred.argmax(dim=1)
 
 class LitSimpleClassifier(LitGenericClassifier):
     def __init__(self, lr=0):
@@ -222,15 +222,22 @@ class LitDigitsClassifier(LitGenericClassifier):
     def __init__(self, lr=0):
         super().__init__(lr=lr)
         self.model = nn.Sequential(
-            nn.Linear(64, 128),
-            nn.ReLU(), # d = 64
-            nn.Linear(128,256),
+            nn.Linear(64, 480),
             nn.ReLU(),
-            nn.Linear(256,128),
+            nn.Dropout(0.2),
+            nn.Linear(480,256),
             nn.ReLU(),
-            nn.Linear(128,16),
+            nn.Dropout(0.0),
+            nn.Linear(256,256),
             nn.ReLU(),
-            nn.Linear(16, 10)   # num_classes = 10
+            nn.Dropout(0.2),
+            nn.Linear(256,224),
+            nn.ReLU(),
+            nn.Dropout(0.30000000000000004),
+            nn.Linear(224,480),
+            nn.ReLU(),
+            nn.Dropout(0.30000000000000004),
+            nn.Linear(480, 10)   # num_classes = 10
         )
     
     def transform_input(self, batch):
@@ -248,4 +255,4 @@ class LitDigitsClassifier(LitGenericClassifier):
         # choose an optimizer from `torch.optim.*`
         # use `self.lr` to set the learning rate
         # other parameters (e.g. momentum) may be hardcoded here
-        return torch.optim.Adam(params=self.parameters(),lr=self.lr,weight_decay=1e-2)
+        return torch.optim.Adam(params=self.parameters(),lr=self.lr)
